@@ -16,10 +16,11 @@ option9="Exit
 PS3="Enter your choice [ 1-9 ]"
 select var in "$option1" "$option2" "$option3" "$option4" "$option5" "$option6" "$option7" "$option8" "$option9"
 do
+	echo ""
 	if [ "$var" = "$option1" ]
 	then
 		read -p "Please enter the 'movie id' (1~1682): " movnum
-
+		echo ""
 		awk -F "|" -v movnum="$movnum" '$1 == movnum {print}' "$1"
 
 	elif [ "$var" = "$option2" ]
@@ -27,14 +28,15 @@ do
 		read -p "Do you want to get the data of 'action' genre movies from 'u.item'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
+			echo ""
 			awk -F "|" 'actioncnt<10 && $7==1 { print $1, $2; actioncnt++ }' "$1"
 		fi
 
 	elif [ "$var" = "$option3" ]
 	then
 		read -p "Please enter the 'movie id' (1~1682): " movnum
-
-		result=$(awk -v movnum="$movienum" '$2 == movnum { ratingsum += $3; people++ } END { if (people > 0) print ratingsum / people; else print 0 }' "$2")
+		echo ""
+		result=$(awk -v movnum="$movnum" '$2 == movnum { ratingsum += $3; people++ } END { if (people > 0) print ratingsum / people; else print 0 }' "$2")
 
 		echo "Average rating of $movnum: $result"
 
@@ -43,13 +45,15 @@ do
 		read -p "Do you want to delete the 'IMDb URL' from 'u.item'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
-			sed -E -n '1,10 { s/([^\|]*\|[^\|]*\|[^\|]*\|[^\|]*\|)([^\|]*\|)([^\|]*\|.*)/\1\3/; p }' "$1"
+			echo ""
+			sed -E -n '1,10 { s/([^\|]*\|[^\|]*\|[^\|]*\|[^\|]*\|)([^\|]*)(\|[^\|]*\|.*)/\1\3/; p }' "$1"
 		fi
 	elif [ "$var" = "$option5" ]
 	then
 		read -p "Do you want to get the data about users from 'u.user'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
+			echo ""
 			for i in $(seq 1 10)
 			do
 				gender=$(sed -n "${i}p" "$3" | sed -E 's/([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|(.*)/\3/')
@@ -72,6 +76,7 @@ do
 		read -p "Do you want to Modify the format of 'release data' in 'u.item'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
+			echo ""
 			for i in $(seq 1673 1682)
 			do
     			month=$(sed -n "${i}p" "$1" | sed -E 's/[^|]*\|[^|]*\|([^-|]*)-([^-|]*)-([^\|]*).*/\2/')
@@ -121,8 +126,10 @@ do
 	elif [ "$var" = "$option7" ]
 	then
 		read -p "Please enter the 'user id'(1~943): " uid
+		echo ""
 		movies=$(awk -v uid="$uid" '$1 == uid {print $2}' "$2" | sort -n)
 		echo "$movies" | tr '\n' '|'
+		echo ""
 		echo ""
 		n=0
 		for i in $movies
@@ -139,6 +146,7 @@ do
 		read -p "Do you want to get the average 'rating' of movies rated by users with 'age' between 20 and 29 and 'occupation' as 'programmer'?(y/n)" yn
 		if [ "$yn" = "y" ]
 		then
+			echo ""
 			for i in $(seq 1 1672)
 			do
 				people=0;
@@ -166,5 +174,6 @@ do
 		echo "Bye!"
 		break
 	fi
+	echo ""
 done
 
