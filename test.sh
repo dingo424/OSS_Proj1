@@ -50,7 +50,22 @@ do
 		read -p "Do you want to get the data about users from 'u.user'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
-			sed -E 's/([^|]*)\|([^|]*)\|(M)\|([^|]*)\|(.*)/user \1 is \2 years old male \4/; s/([^|]*)\|([^|]*)\|(F)\|([^|]*)\|(.*)/user \1 is \2 years old female \4/' "$3" | sed -n '1,10p'
+			for i in $(seq 1 10)
+			do
+				gender=$(sed -n "${i}p" "$3" | sed -E 's/([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|(.*)/\3/')
+				case "$gender" in
+					"M")
+					gender="male"
+					;;
+					"F")
+					gender="female"
+					;;
+				esac
+				part1=$(sed -n "${i}p" "$3" | sed -E 's/([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|(.*)/user \1 is \2 years old/')
+				part2=$(sed -n "${i}p" "$3" | sed -E 's/([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|(.*)/\4/')
+				echo "${part1} ${gender} ${part2}"
+			done
+			
 		fi
 	elif [ "$var" = "$option6" ]
 	then
@@ -59,8 +74,7 @@ do
 		then
 			for i in $(seq 1673 1682)
 			do
-				line=$(sed -n "${i}p" "$1")
-    			month=$(echo "$line" | sed -E 's/[^|]*\|[^|]*\|([^-|]*)-([^-|]*)-([^\|]*).*/\2/')
+    			month=$(sed -n "${i}p" "$1" | sed -E 's/[^|]*\|[^|]*\|([^-|]*)-([^-|]*)-([^\|]*).*/\2/')
 				case "$month" in
 					"Jan")
 					month="01"
