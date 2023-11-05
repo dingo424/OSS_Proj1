@@ -50,11 +50,15 @@ do
 		read -p "Do you want to get the data about users from 'u.user'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
-			sed -E 's/([^|]*)\|([^|]*)\|(M)\|(.*)/user \1 is \2 years old male \4/; s/([^|]*)\|([^|]*)\|(F)\|(.*)/user \1 is \2 years old female \4/' "$datafile" | sed -n '1,10p'
+			sed -E 's/([^|]*)\|([^|]*)\|(M)\|([^|]*)\|(.*)/user \1 is \2 years old male \4/; s/([^|]*)\|([^|]*)\|(F)\|([^|]*)\|(.*)/user \1 is \2 years old female \4/' "$3" | sed -n '1,10p'
 		fi
 	elif [ "$var" = "$option6" ]
 	then
 		read -p "Do you want to Modify the format of 'release data' in 'u.item'?(y/n): " yn
+		if [ "$yn" = "y" ]
+		then
+			sed -E -n '1, 10 {s/([^|]*\|[^|]*\|)([^-]*)-([^-]*)-([^\|]\|.*)/\1\2\3\4/; p}' "$1"
+		fi
 	fi
 done
 
