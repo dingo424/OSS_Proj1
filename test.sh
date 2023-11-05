@@ -118,6 +118,22 @@ do
 				echo "${part1}${month}${part2}"
 			done
 		fi
+	elif [ "$var" = "$option7" ]
+	then
+		read -p "Please enter the 'user id'(1~943): " uid
+		movies=$(awk -v uid="$uid" '$1 == uid {print $2}' "$2" | sort -n)
+		echo "$movies" | tr '\n' '|'
+		echo ""
+		n=0
+		for var in $movies
+		do
+			awk -F "|" -v var="$var" '$1 == var {print $1"|"$2}' "$1"
+			((++n))
+			if [ $n -eq 10 ]
+			then
+				break
+			fi
+		done
 	fi
 done
 
