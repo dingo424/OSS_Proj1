@@ -24,19 +24,34 @@ do
 
 	elif [ "$var" = "$option2" ]
 	then
-		read -p "Do you want to get the data of ‘action’ genre movies from 'u.item’?(y/n):" yesno
-		if [ "$yesno" = "y" ]
+		read -p "Do you want to get the data of ‘action’ genre movies from 'u.item’?(y/n): " yn
+		if [ "$yn" = "y" ]
 		then
 			awk -F "|" 'actioncnt<10 && $7==1 { print $1, $2; actioncnt++ }' "$1"
 		fi
 
 	elif [ "$var" = "$option3" ]
 	then
-		read -p "Please enter the 'movie id' (1~1682): " movienum
+		read -p "Please enter the 'movie id' (1~1682): " movnum
 
-		result=$(awk -v movienum="$movienum" '$2 == movienum { ratingsum += $3; people++ } END { if (people > 0) print ratingsum / people; else print 0 }' "$2")
+		result=$(awk -v movnum="$movienum" '$2 == movnum { ratingsum += $3; people++ } END { if (people > 0) print ratingsum / people; else print 0 }' "$2")
 
-		echo "Average rating of $movienum: $result"
+		echo "Average rating of $movnum: $result"
+
+	elif [ "$var" = "$option4" ]
+	then
+		read -p "Do you want to delete the 'IMDb URL' from 'u.item'?(y/n): " yn
+		if [ "$yn" = "y" ]
+		then
+			sed -E -n '1,10 { s/([^\|]*\|[^\|]*\|[^\|]*\|[^\|]*\|)([^\|]*\|)([^\|]*\|.*)/\1\3/; p }' "$1"
+		fi
+	elif [ "$var" = "$option5" ]
+	then
+		read -p "Do you want to get the data about users from 'u.user'?(y/n): " yn
+		if [ "$yn" = "y" ]
+		then
+			sed -E -n '1,10 { s/([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/user \1 is \2 years old \3 \4/; p }' "$3"
+		fi
 	fi
 done
 
