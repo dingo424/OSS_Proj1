@@ -24,7 +24,7 @@ do
 
 	elif [ "$var" = "$option2" ]
 	then
-		read -p "Do you want to get the data of ‘action’ genre movies from 'u.item’?(y/n): " yn
+		read -p "Do you want to get the data of 'action' genre movies from 'u.item'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
 			awk -F "|" 'actioncnt<10 && $7==1 { print $1, $2; actioncnt++ }' "$1"
@@ -125,15 +125,46 @@ do
 		echo "$movies" | tr '\n' '|'
 		echo ""
 		n=0
-		for var in $movies
+		for i in $movies
 		do
-			awk -F "|" -v var="$var" '$1 == var {print $1"|"$2}' "$1"
+			awk -F "|" -v mov="$i" '$1 == mov {print $1"|"$2}' "$1"
 			((++n))
 			if [ $n -eq 10 ]
 			then
 				break
 			fi
 		done
+	elif [ "$var" = "$option8" ]
+	then
+		read -p "Do you want to get the average 'rating' of movies rated by users with 'age' between 20 and 29 and 'occupation' as 'programmer'?(y/n)" yn
+		if [ "$yn" = "y" ]
+		then
+			for i in $(seq 1 1672)
+			do
+				people=0;
+				rating=0;
+				raters=$(awk -v mov="$i" '$2 == mov {print $1}' "$2")
+				for j in $raters
+				do
+					age=$(sed -n "${j}p" "$3" | sed -E 's/([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|.*/\2/')
+					occupation=$(sed -n "${j}p" "$3" | sed -E 's/([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|.*/\4/')
+					if [ $((age)) -ge 20 -a $((age)) -le 29 -a "$occupation" = "programmer" ]
+					then
+						rate=$(awk -v mov="$i" -v uid="$j" '$2 == mov && $1 == uid {print $3}' "$2")
+						rating=$((rating + rate))
+						((people++))
+					fi
+				done
+				if [ $((people)) -gt 0 ]
+				then
+					echo $i $rating $people | awk '{printf "%d %.5f\n", $1, $2 / $3}'
+				fi
+			done
+		fi
+	elif [ "$var" = "$option9" ]
+	then
+		echo "Bye!"
+		break
 	fi
 done
 
