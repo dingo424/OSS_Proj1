@@ -18,17 +18,25 @@ select var in "$option1" "$option2" "$option3" "$option4" "$option5" "$option6" 
 do
 	if [ "$var" = "$option1" ]
 	then
-		read -p "Please enter the 'movie id' (1~1682): " movienum
+		read -p "Please enter the 'movie id' (1~1682): " movnum
 
-		ratingsum=0;
-		people=0;
+		awk -F "|" -v movnum="$movnum" '$1 == movnum {print}' "$1"
+
+	elif [ "$var" = "$option2" ]
+	then
+		read -p "Do you want to get the data of ‘action’ genre movies from 'u.item’?(y/n):" yesno
+		if [ "$yesno" = "y" ]
+		then
+			awk -F "|" 'actioncnt<10 && $7==1 { print $1, $2; actioncnt++ }' "$1"
+		fi
+
+	elif [ "$var" = "$option3" ]
+	then
+		read -p "Please enter the 'movie id' (1~1682): " movienum
 
 		result=$(awk -v movienum="$movienum" '$2 == movienum { ratingsum += $3; people++ } END { if (people > 0) print ratingsum / people; else print 0 }' "$2")
 
 		echo "Average rating of $movienum: $result"
-	elif [ "$var" = "$option2" ]
-	then
-		
 	fi
 done
 
