@@ -57,7 +57,52 @@ do
 		read -p "Do you want to Modify the format of 'release data' in 'u.item'?(y/n): " yn
 		if [ "$yn" = "y" ]
 		then
-			sed -E -n '1, 10 {s/([^|]*\|[^|]*\|)([^-]*)-([^-]*)-([^\|]\|.*)/\1\2\3\4/; p}' "$1"
+			for i in $(seq 1673 1682)
+			do
+				line=$(sed -n "${i}p" "$1")
+    			month=$(echo "$line" | sed -E 's/[^|]*\|[^|]*\|([^-|]*)-([^-|]*)-([^\|]*).*/\2/')
+				case "$month" in
+					"Jan")
+					month="01"
+					;;
+					"Feb")
+					month="02"
+					;;
+					"Mar")
+					month="03"
+					;;
+					"Apr")
+					month="04"
+					;;
+					"May")
+					month="05"
+					;;
+					"Jun")
+					month="06"
+					;;
+					"Jul")
+					month="07"
+					;;
+					"Aug")
+					month="08"
+					;;
+					"Sep")
+					month="09"
+					;;
+					"Oct")
+					month="10"
+					;;
+					"Nov")
+					month="11"
+					;;
+					"Dec")
+					month="12"
+					;;
+				esac
+				part1=$(sed -n "${i}p" "$1" | sed -E 's/([^|]*\|[^|]*\|)([^-\|]*)-([^-\|]*)-([^\|]*)(.*)/\1\4/')
+				part2=$(sed -n "${i}p" "$1" | sed -E 's/([^|]*\|[^|]*\|)([^-\|]*)-([^-\|]*)-([^\|]*)(.*)/\2\5/')
+				echo "${part1}${month}${part2}"
+			done
 		fi
 	fi
 done
