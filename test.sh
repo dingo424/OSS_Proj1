@@ -1,4 +1,7 @@
 #! /bin/bash
+itemfile=$1
+datafile=$2
+userfile=$3
 echo "---------------------------"
 echo "User Name: 차인태"
 echo "Student Number: 12201810"
@@ -16,6 +19,12 @@ option9="Exit
 PS3="Enter your choice [ 1-9 ]"
 select var in "$option1" "$option2" "$option3" "$option4" "$option5" "$option6" "$option7" "$option8" "$option9"
 do
-	echo $var
+	if [$var -eq 1]; then
+		read -p "Please enter the 'movie id'(1~1682):" movienum
+		ratingsum=0;
+		people=0;
+		datafile | awk "$2==$movienum {$ratingsum=$(expr $ratingsum + $2), $people=$(expr $people + 1)}" 
+		echo "Average rating of $movienum : $(expr $ratingsum / $people)"
+	fi
 done
 
